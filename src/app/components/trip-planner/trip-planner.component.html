@@ -13,7 +13,7 @@
         (click)="saveDraft()"
         [disabled]="!formHasContent"
       >
-        💾 Save Draft
+        Save Draft
       </button>
     </div>
   </header>
@@ -75,7 +75,7 @@
 
             @if (dropoffs.length < 3) {
               <button type="button" class="btn-add-dropoff" (click)="addDropoff()">
-                ➕ Add Drop-off
+                Add Drop-off
               </button>
             }
           </div>
@@ -129,7 +129,7 @@
             </div>
             @if (form.get('cargoWeight')?.value && form.get('cargoWeight')!.value > maxCapacity) {
               <span class="field-hint error">
-                ⚠️ Max capacity: {{ maxCapacity }} tonnes ({{ truckCount }} × {{ truckSpecs[truckCategoryValue].capacityTonnes }}t)
+                Max capacity: {{ maxCapacity }} tonnes ({{ truckCount }} × {{ truckSpecs[truckCategoryValue].capacityTonnes }}t)
               </span>
             } @else {
               <span class="field-hint">
@@ -170,11 +170,11 @@
           @if (form.get('pickupDate')?.value && form.get('pickupTime')?.value) {
             @if (isPickupInFuture()) {
               <span class="field-hint success">
-                ✅ Must be later than current time — OK
+                Pickup time is after the current time.
               </span>
             } @else {
               <span class="field-hint error">
-                ❌ Pickup time must be in the future.
+                Pickup time must be in the future.
               </span>
             }
           }
@@ -196,21 +196,21 @@
         <!-- Action buttons -->
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            📋 Get Estimate
+            Get Estimate
           </button>
           <button type="button" class="btn btn-secondary" (click)="saveDraft()" [disabled]="!formHasContent">
-            💾 Save Draft
+            Save Draft
           </button>
           @if (formHasContent) {
             <button type="button" class="btn btn-danger-outline" (click)="clearDraft()">
-              🗑️ Clear
+              Clear
             </button>
           }
         </div>
       </form>
 
       @if (draftSaved) {
-        <div class="draft-toast">✅ Draft saved successfully!</div>
+        <div class="draft-toast" role="status">Draft saved successfully.</div>
       }
     </section>
 
@@ -219,7 +219,7 @@
       @switch (quoteState.status) {
         @case ('idle') {
           <div class="quote-empty">
-            <div class="empty-icon">📋</div>
+            <div class="empty-icon" aria-hidden="true">৳</div>
             <h3>No Estimate Yet</h3>
             <p>Configure your trip and click "Get Estimate" to see the fare breakdown.</p>
           </div>
@@ -234,11 +234,11 @@
         @case ('success') {
           <div class="quote-success">
             <div class="quote-header-badge success">
-              ✅ Quote Generated Successfully
+              Quote Generated Successfully
             </div>
             <div class="quote-details">
               <div class="quote-row">
-                <span class="quote-label">📍 Route</span>
+                <span class="quote-label">Route</span>
                 <span class="quote-value route-value">
                   @for (loc of quoteState.result.route; track loc; let last = $last) {
                     <span>{{ loc }}</span>
@@ -247,36 +247,36 @@
                 </span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">🛣️ Total Distance</span>
+                <span class="quote-label">Total Distance</span>
                 <span class="quote-value">{{ quoteState.result.distanceKm }} km</span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">🚛 Transport Subtotal</span>
+                <span class="quote-label">Transport Subtotal</span>
                 <span class="quote-value">৳{{ quoteState.result.transportCost | number }}</span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">⚙️ Optional Services</span>
+                <span class="quote-label">Optional Services</span>
                 <span class="quote-value">৳{{ quoteState.result.serviceCost | number }}</span>
               </div>
               <div class="quote-row grand-total">
-                <span class="quote-label">💰 Grand Total</span>
+                <span class="quote-label">Grand Total</span>
                 <span class="quote-value total-value">৳{{ quoteState.result.totalQuote | number }}</span>
               </div>
             </div>
             <div class="quote-valid-badge">
-              <span>✅ This estimate is valid for the current trip inputs.</span>
+              <span>This estimate is valid for the current trip inputs.</span>
             </div>
           </div>
         }
         @case ('stale') {
           <div class="quote-stale">
             <div class="quote-header-badge stale">
-              ⚠️ Your trip has changed
+              Your trip has changed
             </div>
             <p class="stale-message">The previous estimate is no longer valid. Please click "Get Estimate" again.</p>
             <div class="quote-details faded">
               <div class="quote-row">
-                <span class="quote-label">📍 Route</span>
+                <span class="quote-label">Route</span>
                 <span class="quote-value route-value">
                   @for (loc of quoteState.result.route; track loc; let last = $last) {
                     <span>{{ loc }}</span>
@@ -285,28 +285,28 @@
                 </span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">🛣️ Total Distance</span>
+                <span class="quote-label">Total Distance</span>
                 <span class="quote-value">{{ quoteState.result.distanceKm }} km</span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">🚛 Transport Subtotal</span>
+                <span class="quote-label">Transport Subtotal</span>
                 <span class="quote-value">৳{{ quoteState.result.transportCost | number }}</span>
               </div>
               <div class="quote-row">
-                <span class="quote-label">⚙️ Optional Services</span>
+                <span class="quote-label">Optional Services</span>
                 <span class="quote-value">৳{{ quoteState.result.serviceCost | number }}</span>
               </div>
               <div class="quote-row grand-total">
-                <span class="quote-label">💰 Grand Total</span>
+                <span class="quote-label">Grand Total</span>
                 <span class="quote-value total-value">৳{{ quoteState.result.totalQuote | number }}</span>
               </div>
             </div>
           </div>
         }
         @case ('error') {
-          <div class="quote-error">
+          <div class="quote-error" role="alert">
             <div class="quote-header-badge error">
-              ❌ Please fix the following issues:
+              Please review your trip details
             </div>
             <ul class="error-list">
               @for (err of quoteState.errors; track err) {

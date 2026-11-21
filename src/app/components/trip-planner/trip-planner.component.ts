@@ -68,7 +68,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       pickup: [null as LocationId | null, Validators.required],
       dropoffs: this.fb.array(
-        [] as FormControl[],
+        [new FormControl(null as LocationId | null, Validators.required)],
         [Validators.required, Validators.minLength(1), Validators.maxLength(3)]
       ),
       truckCategory: ['medium' as TruckCategory, Validators.required],
@@ -122,6 +122,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   }
 
   removeDropoff(index: number): void {
+    if (this.dropoffs.length <= 1) return; // Minimum 1 dropoff required
     this.dropoffs.removeAt(index);
   }
 
@@ -223,10 +224,14 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
       unloadingAssistance: draft.unloadingAssistance,
     });
 
-    // Restore dropoffs
+    // Restore dropoffs (ensure at least 1)
     this.dropoffs.clear();
-    for (const d of draft.dropoffs) {
-      this.dropoffs.push(new FormControl(d, Validators.required));
+    if (draft.dropoffs.length === 0) {
+      this.dropoffs.push(new FormControl(null as LocationId | null, Validators.required));
+    } else {
+      for (const d of draft.dropoffs) {
+        this.dropoffs.push(new FormControl(d, Validators.required));
+      }
     }
   }
 
@@ -243,6 +248,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
       unloadingAssistance: false,
     });
     this.dropoffs.clear();
+    this.dropoffs.push(new FormControl(null as LocationId | null, Validators.required));
     this.quoteState = { status: 'idle' };
     this.lastQuotedConfig = null;
   }
