@@ -16,3 +16,105 @@ html, body {
 input, select, button, textarea {
   font-family: inherit;
 }
+
+.planner-body > .quote-drawer-backdrop,
+.planner-body .quote-drawer-heading {
+  display: none;
+}
+
+@keyframes quoteDrawerEnter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .planner-body > .quote-panel:not(.mobile-drawer-open) {
+    display: none;
+  }
+
+  .planner-body > .quote-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(41, 35, 38, 0.48);
+  }
+
+  .planner-body > .quote-panel.mobile-drawer-open {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 1001;
+    max-height: min(82vh, 720px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    background: palette.$surface;
+    box-shadow: 0 -8px 32px rgba(41, 35, 38, 0.18);
+    animation: quoteDrawerEnter 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .planner-body .quote-drawer-heading {
+    display: block;
+    position: sticky;
+    top: -8px;
+    z-index: 1;
+    padding: 4px 0 12px;
+    background: palette.$surface;
+  }
+
+  .planner-body .quote-drawer-handle {
+    width: 36px;
+    height: 4px;
+    margin: 0 auto 12px;
+    border-radius: 999px;
+    background: palette.$border-strong;
+  }
+
+  .planner-body .quote-drawer-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      margin: 0;
+      color: palette.$text;
+      font-size: 1rem;
+    }
+  }
+
+  .planner-body .quote-drawer-close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: palette.$surface-muted;
+    color: palette.$text-muted;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid rgba(palette.$brand, 0.24);
+      outline-offset: 2px;
+    }
+  }
+
+  .planner-body > .quote-panel.mobile-drawer-open .quote-loading {
+    padding: 24px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planner-body > .quote-panel.mobile-drawer-open {
+    animation: none;
+  }
+}

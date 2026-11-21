@@ -67,6 +67,7 @@ describe('TripPlannerComponent', () => {
   it('should show errors when requesting quote with invalid form', () => {
     component.requestQuote();
     expect(component.quoteState.status).toBe('error');
+    expect(component.quoteDrawerOpen).toBeTrue();
     expect(component.pickup.touched).toBeTrue();
     expect(component.initialDropoffControl.touched).toBeTrue();
     fixture.detectChanges();
@@ -74,6 +75,9 @@ describe('TripPlannerComponent', () => {
     expect(fixture.nativeElement.querySelector('.form-input.ng-invalid.ng-touched')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.quote-error')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.field-hint.error')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.quote-panel.mobile-drawer-open')).toBeTruthy();
+    fixture.nativeElement.querySelector('.quote-drawer-close').click();
+    expect(component.quoteDrawerOpen).toBeFalse();
     if (component.quoteState.status === 'error') {
       expect(component.quoteState.errors.length).toBeGreaterThan(0);
       expect(component.quoteState.errors).toContain('At least one drop-off location is required.');
@@ -106,16 +110,25 @@ describe('TripPlannerComponent', () => {
     component.dropoffs.at(1).setValue('C');
 
     component.requestQuote();
+    expect(component.quoteDrawerOpen).toBeTrue();
     tick(10);
     fixture.detectChanges();
 
     expect(component.quoteState.status).toBe('success');
+    expect(component.hasCurrentEstimate).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.btn-primary').textContent).toContain('Show Estimation');
     if (component.quoteState.status === 'success') {
       expect(component.quoteState.result.totalQuote).toBe(5790);
       const routeText = fixture.nativeElement.querySelector('.quote-success .route-value')?.textContent ?? '';
       expect(routeText).toContain('Baily Road');
       expect(routeText).toContain('Shahbagh');
       expect(routeText).toContain('Bijoy Sarani');
+
+      const requestId = component.quoteState.requestId;
+      component.closeQuoteDrawer();
+      component.requestQuote();
+      expect(component.quoteState.requestId).toBe(requestId);
+      expect(component.quoteDrawerOpen).toBeTrue();
     }
   }));
 
@@ -143,6 +156,9 @@ describe('TripPlannerComponent', () => {
     // Now change something
     component.form.patchValue({ truckCount: 3 });
     expect(component.quoteState.status).toBe('stale');
+    expect(component.hasCurrentEstimate).toBeFalse();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.btn-primary').textContent).toContain('Get Estimate');
   }));
 
   it('should only display the latest quote when multiple requests overlap', fakeAsync(() => {
@@ -201,6 +217,7 @@ describe('TripPlannerComponent', () => {
 
     component.form.patchValue({ truckCount: 2 });
     expect(component.quoteState.status).toBe('idle');
+    expect(component.quoteDrawerOpen).toBeFalse();
 
     tick(600);
     expect(component.quoteState.status).toBe('idle');

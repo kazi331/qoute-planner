@@ -179,7 +179,7 @@
         <!-- Action buttons -->
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            Get Estimate
+            {{ hasCurrentEstimate ? 'Show Estimation' : 'Get Estimate' }}
           </button>
           <button type="button" class="btn btn-secondary" (click)="saveDraft()" [disabled]="!formHasContent">
             Save Draft
@@ -198,7 +198,19 @@
     </section>
 
     <!-- Right Panel: Quote Result -->
-    <section class="quote-panel">
+    @if (quoteDrawerOpen) {
+    <button type="button" class="quote-drawer-backdrop" aria-label="Close quote drawer"
+      (click)="closeQuoteDrawer()"></button>
+    }
+    <section class="quote-panel" [class.mobile-drawer-open]="quoteDrawerOpen" aria-label="Trip estimate">
+      <div class="quote-drawer-heading">
+        <div class="quote-drawer-handle" aria-hidden="true"></div>
+        <div class="quote-drawer-title-row">
+          <h2>Trip estimate</h2>
+          <button type="button" class="quote-drawer-close" aria-label="Close quote drawer"
+            (click)="closeQuoteDrawer()">✕</button>
+        </div>
+      </div>
       @switch (quoteState.status) {
       @case ('idle') {
       <div class="quote-empty">

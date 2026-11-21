@@ -28,6 +28,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   readonly initialDropoffControl = new FormControl<LocationId | null>(null, Validators.required);
   quoteState: QuoteState = { status: 'idle' };
+  quoteDrawerOpen = false;
 
   draftSaved = false;
   draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -62,6 +63,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
         this.currentRequestId++;
         this.cancelQuote$.next();
         this.quoteState = { status: 'idle' };
+        this.quoteDrawerOpen = false;
       } else if (this.quoteState.status === 'success') {
         const currentConfig = JSON.stringify(this.getConfigFromForm());
         if (currentConfig !== this.lastQuotedConfig) {
@@ -124,6 +126,11 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     const date = this.form.get('pickupDate')?.value;
     const time = this.form.get('pickupTime')?.value;
     return this.quoteState.status === 'error' && !!date && !!time && !this.isPickupInFuture();
+  }
+
+  get hasCurrentEstimate(): boolean {
+    return this.quoteState.status === 'success'
+      && JSON.stringify(this.getConfigFromForm()) === this.lastQuotedConfig;
   }
 
   get availablePickupLocations(): Location[] {
@@ -199,6 +206,9 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   }
 
   requestQuote(): void {
+    this.quoteDrawerOpen = true;
+    if (this.hasCurrentEstimate) return;
+
     const config = this.getConfigFromForm();
     const errors = this.quoteService.validateForQuote(config);
     if (errors.length > 0) {
@@ -210,6 +220,10 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
       return;
     }
     this.quoteRequest$.next(config);
+  }
+
+  closeQuoteDrawer(): void {
+    this.quoteDrawerOpen = false;
   }
 
   getConfigFromForm(): TripConfig {
@@ -275,6 +289,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     this.dropoffs.clear();
     this.initialDropoffControl.reset(null, { emitEvent: false });
     this.quoteState = { status: 'idle' };
+    this.quoteDrawerOpen = false;
     this.lastQuotedConfig = null;
   }
 
