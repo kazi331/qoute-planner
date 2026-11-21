@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { TripPlannerComponent } from './components/trip-planner/trip-planner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [TripPlannerComponent],
+  template: '<app-trip-planner />',
+  styles: [':host { display: block; }'],
 })
-export class AppComponent {
-  title = 'multi-step-trip-qoute-planner';
-}
+export class AppComponent {}

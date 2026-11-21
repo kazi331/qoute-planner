@@ -1,0 +1,321 @@
+<div class="planner-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-brand">
+      <span class="brand-icon">🚛</span>
+      <span class="brand-name">Truck Lagbe</span>
+      <span class="header-divider"></span>
+      <span class="header-title">Multi-Stop Trip Quote Planner</span>
+    </div>
+    <div class="header-actions">
+      <button
+        class="btn btn-save-draft-header"
+        (click)="saveDraft()"
+        [disabled]="!formHasContent"
+      >
+        💾 Save Draft
+      </button>
+    </div>
+  </header>
+
+  <div class="planner-body">
+    <!-- Left Panel: Form -->
+    <section class="form-panel">
+      <h2 class="panel-title">📍 Trip Configuration</h2>
+
+      <form [formGroup]="form" (ngSubmit)="requestQuote()">
+        <!-- 1. Locations -->
+        <div class="form-section">
+          <h3 class="section-title">1. Locations</h3>
+
+          <!-- Pickup -->
+          <div class="form-group">
+            <label class="form-label">
+              Pickup Location <span class="required">*</span>
+            </label>
+            <div class="select-wrapper">
+              <span class="input-icon">📍</span>
+              <select formControlName="pickup" class="form-select">
+                <option [ngValue]="null" disabled>Select pickup location</option>
+                @for (loc of availablePickupLocations; track loc.id) {
+                  <option [ngValue]="loc.id">{{ loc.id }} — {{ loc.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Dropoffs -->
+          <div class="form-group">
+            <label class="form-label">
+              Drop-off Locations (1–3) <span class="required">*</span>
+            </label>
+
+            <div cdkDropList
+                 class="dropoff-list"
+                 (cdkDropListDropped)="dropDropoff($event)">
+              @for (ctrl of dropoffs.controls; track ctrl; let i = $index) {
+                <div class="dropoff-item" cdkDrag>
+                  <div class="drag-handle" cdkDragHandle>⣿</div>
+                  <div class="select-wrapper dropoff-select">
+                    <span class="input-icon">📍</span>
+                    <select [formControl]="$any(ctrl)" class="form-select">
+                      <option [ngValue]="null" disabled>Select drop-off</option>
+                      @for (loc of availableDropoffLocations(i); track loc.id) {
+                        <option [ngValue]="loc.id">{{ loc.id }} — {{ loc.name }}</option>
+                      }
+                    </select>
+                  </div>
+                  <button type="button" class="btn-icon btn-remove" (click)="removeDropoff(i)" title="Remove drop-off">
+                    ✕
+                  </button>
+                  <div class="drag-placeholder" *cdkDragPlaceholder></div>
+                </div>
+              }
+            </div>
+
+            @if (dropoffs.length < 3) {
+              <button type="button" class="btn-add-dropoff" (click)="addDropoff()">
+                ➕ Add Drop-off
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- 2. Truck & Cargo -->
+        <div class="form-section">
+          <h3 class="section-title">2. Truck &amp; Cargo</h3>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="form-label">
+                Truck Category <span class="required">*</span>
+              </label>
+              <div class="select-wrapper">
+                <span class="input-icon">🚛</span>
+                <select formControlName="truckCategory" class="form-select">
+                  @for (spec of truckCategories; track spec.category) {
+                    <option [ngValue]="spec.category">{{ spec.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Number of Trucks <span class="required">*</span>
+              </label>
+              <div class="truck-count-control">
+                <button type="button" class="btn-counter" (click)="decrementTrucks()" [disabled]="truckCount <= 1">−</button>
+                <input type="number" formControlName="truckCount" class="truck-count-input" readonly>
+                <button type="button" class="btn-counter" (click)="incrementTrucks()" [disabled]="truckCount >= 5">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Total Cargo Weight (tonnes) <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">📦</span>
+              <input
+                type="number"
+                formControlName="cargoWeight"
+                class="form-input"
+                placeholder="Enter cargo weight"
+                [min]="0.01"
+                step="0.1"
+              >
+            </div>
+            @if (form.get('cargoWeight')?.value && form.get('cargoWeight')!.value > maxCapacity) {
+              <span class="field-hint error">
+                ⚠️ Max capacity: {{ maxCapacity }} tonnes ({{ truckCount }} × {{ truckSpecs[truckCategoryValue].capacityTonnes }}t)
+              </span>
+            } @else {
+              <span class="field-hint">
+                Max capacity: {{ maxCapacity }} tonnes
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- 3. Pickup Date & Time -->
+        <div class="form-section">
+          <h3 class="section-title">3. Pickup Date &amp; Time</h3>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="form-label">Date <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <span class="input-icon">📅</span>
+                <input
+                  type="date"
+                  formControlName="pickupDate"
+                  class="form-input"
+                  [min]="todayStr"
+                >
+              </div>
+            </div>
+            <div class="form-group flex-1">
+              <label class="form-label">Time <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <span class="input-icon">🕐</span>
+                <input
+                  type="time"
+                  formControlName="pickupTime"
+                  class="form-input"
+                >
+              </div>
+            </div>
+          </div>
+          @if (form.get('pickupDate')?.value && form.get('pickupTime')?.value) {
+            @if (isPickupInFuture()) {
+              <span class="field-hint success">
+                ✅ Must be later than current time — OK
+              </span>
+            } @else {
+              <span class="field-hint error">
+                ❌ Pickup time must be in the future.
+              </span>
+            }
+          }
+        </div>
+
+        <!-- 4. Optional Services -->
+        <div class="form-section">
+          <h3 class="section-title">4. Optional Services</h3>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="loadingAssistance">
+            <span class="checkbox-text">Loading Assistance ({{ loadingFee }} BDT/truck)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="unloadingAssistance">
+            <span class="checkbox-text">Unloading Assistance ({{ unloadingFee }} BDT/truck)</span>
+          </label>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            📋 Get Estimate
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="saveDraft()" [disabled]="!formHasContent">
+            💾 Save Draft
+          </button>
+          @if (formHasContent) {
+            <button type="button" class="btn btn-danger-outline" (click)="clearDraft()">
+              🗑️ Clear
+            </button>
+          }
+        </div>
+      </form>
+
+      @if (draftSaved) {
+        <div class="draft-toast">✅ Draft saved successfully!</div>
+      }
+    </section>
+
+    <!-- Right Panel: Quote Result -->
+    <section class="quote-panel">
+      @switch (quoteState.status) {
+        @case ('idle') {
+          <div class="quote-empty">
+            <div class="empty-icon">📋</div>
+            <h3>No Estimate Yet</h3>
+            <p>Configure your trip and click "Get Estimate" to see the fare breakdown.</p>
+          </div>
+        }
+        @case ('pending') {
+          <div class="quote-loading">
+            <div class="spinner"></div>
+            <h3>Generating quote...</h3>
+            <p>This may take 300–1,200 ms. You can modify your trip while we calculate.</p>
+          </div>
+        }
+        @case ('success') {
+          <div class="quote-success">
+            <div class="quote-header-badge success">
+              ✅ Quote Generated Successfully
+            </div>
+            <div class="quote-details">
+              <div class="quote-row">
+                <span class="quote-label">📍 Route</span>
+                <span class="quote-value route-value">
+                  @for (loc of quoteState.result.route; track loc; let last = $last) {
+                    <span>{{ loc }}</span>
+                    @if (!last) { <span class="arrow">→</span> }
+                  }
+                </span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">🛣️ Total Distance</span>
+                <span class="quote-value">{{ quoteState.result.distanceKm }} km</span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">🚛 Transport Subtotal</span>
+                <span class="quote-value">৳{{ quoteState.result.transportCost | number }}</span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">⚙️ Optional Services</span>
+                <span class="quote-value">৳{{ quoteState.result.serviceCost | number }}</span>
+              </div>
+              <div class="quote-row grand-total">
+                <span class="quote-label">💰 Grand Total</span>
+                <span class="quote-value total-value">৳{{ quoteState.result.totalQuote | number }}</span>
+              </div>
+            </div>
+            <div class="quote-valid-badge">
+              <span>✅ This estimate is valid for the current trip inputs.</span>
+            </div>
+          </div>
+        }
+        @case ('stale') {
+          <div class="quote-stale">
+            <div class="quote-header-badge stale">
+              ⚠️ Your trip has changed
+            </div>
+            <p class="stale-message">The previous estimate is no longer valid. Please click "Get Estimate" again.</p>
+            <div class="quote-details faded">
+              <div class="quote-row">
+                <span class="quote-label">📍 Route</span>
+                <span class="quote-value route-value">
+                  @for (loc of quoteState.result.route; track loc; let last = $last) {
+                    <span>{{ loc }}</span>
+                    @if (!last) { <span class="arrow">→</span> }
+                  }
+                </span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">🛣️ Total Distance</span>
+                <span class="quote-value">{{ quoteState.result.distanceKm }} km</span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">🚛 Transport Subtotal</span>
+                <span class="quote-value">৳{{ quoteState.result.transportCost | number }}</span>
+              </div>
+              <div class="quote-row">
+                <span class="quote-label">⚙️ Optional Services</span>
+                <span class="quote-value">৳{{ quoteState.result.serviceCost | number }}</span>
+              </div>
+              <div class="quote-row grand-total">
+                <span class="quote-label">💰 Grand Total</span>
+                <span class="quote-value total-value">৳{{ quoteState.result.totalQuote | number }}</span>
+              </div>
+            </div>
+          </div>
+        }
+        @case ('error') {
+          <div class="quote-error">
+            <div class="quote-header-badge error">
+              ❌ Please fix the following issues:
+            </div>
+            <ul class="error-list">
+              @for (err of quoteState.errors; track err) {
+                <li>{{ err }}</li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </section>
+  </div>
+</div>
