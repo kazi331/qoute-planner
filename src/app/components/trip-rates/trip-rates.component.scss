@@ -1,8 +1,10 @@
+@use '../../../palette' as palette;
+
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5f7fb;
-  color: #1b2b40;
+  background: palette.$page;
+  color: palette.$text;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
@@ -13,9 +15,9 @@
   gap: 20px;
   min-height: 64px;
   padding: 10px 24px;
-  background: #173a5e;
+  background: palette.$ink;
   color: white;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 2px 8px rgba(41, 35, 38, 0.12);
 }
 
 .header-brand {
@@ -25,12 +27,8 @@
 }
 
 .brand-icon {
-  font-size: 1.45rem;
-}
-
-.brand-name {
-  font-size: 1.05rem;
-  font-weight: 700;
+  width: 147px;
+  height: 36px;
 }
 
 .header-divider {
@@ -77,7 +75,7 @@
 
   .eyebrow {
     margin: 0 0 8px;
-    color: #1d5eb5;
+    color: palette.$brand;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -85,14 +83,14 @@
 
   h1 {
     margin: 0;
-    color: #173a5e;
+    color: palette.$ink;
     font-size: clamp(1.8rem, 4vw, 2.4rem);
     letter-spacing: -0.035em;
   }
 
   > p:last-child {
     margin: 10px 0 0;
-    color: #63758a;
+    color: palette.$text-muted;
     font-size: 0.96rem;
     line-height: 1.55;
   }
@@ -100,10 +98,10 @@
 
 .rates-card,
 .service-section {
-  border: 1px solid #e1e8f0;
+  border: 1px solid palette.$border;
   border-radius: 14px;
-  background: white;
-  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.04);
+  background: palette.$surface;
+  box-shadow: 0 5px 16px rgba(41, 35, 38, 0.04);
 }
 
 .rates-card {
@@ -119,14 +117,14 @@
 
   h2 {
     margin: 0;
-    color: #1b2b40;
+    color: palette.$text;
     font-size: 1.08rem;
     font-weight: 700;
   }
 
   p {
     margin: 5px 0 0;
-    color: #63758a;
+    color: palette.$text-muted;
     font-size: 0.86rem;
   }
 }
@@ -134,8 +132,8 @@
 .rate-unit {
   padding: 6px 9px;
   border-radius: 6px;
-  background: #f0f5fb;
-  color: #52677e;
+  background: palette.$brand-soft;
+  color: palette.$brand-dark;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -152,14 +150,14 @@
   text-align: left;
 
   thead {
-    background: #f6f8fb;
-    color: #63758a;
+    background: palette.$surface-muted;
+    color: palette.$text-muted;
   }
 
   th,
   td {
     padding: 14px 22px;
-    border-top: 1px solid #edf1f5;
+    border-top: 1px solid palette.$border-soft;
     font-size: 0.88rem;
     white-space: nowrap;
   }
@@ -169,26 +167,26 @@
   }
 
   thead th {
-    border-top: 1px solid #e7edf4;
+    border-top: 1px solid palette.$border;
     font-size: 0.76rem;
     letter-spacing: 0.025em;
   }
 
   tbody th {
-    color: #1b2b40;
+    color: palette.$text;
   }
 
   tbody td {
-    color: #52677e;
+    color: palette.$text-muted;
   }
 }
 
 .price-cell {
-  color: #1d5eb5 !important;
+  color: palette.$brand-dark !important;
   font-weight: 700;
 
   span {
-    color: #63758a;
+    color: palette.$text-muted;
     font-size: 0.78rem;
     font-weight: 500;
   }
@@ -197,7 +195,7 @@
 .rate-note {
   margin: 0;
   padding: 14px 22px 18px;
-  color: #63758a;
+  color: palette.$text-muted;
   font-size: 0.82rem;
   line-height: 1.5;
 }
@@ -221,24 +219,24 @@
   gap: 16px;
   min-height: 64px;
   padding: 14px 16px;
-  border: 1px solid #e7edf4;
+  border: 1px solid palette.$border-soft;
   border-radius: 10px;
-  background: #fbfcfe;
+  background: palette.$brand-wash;
 
   .service-name {
-    color: #52677e;
+    color: palette.$text-muted;
     font-size: 0.9rem;
     font-weight: 600;
   }
 
   strong {
-    color: #1d5eb5;
+    color: palette.$brand-dark;
     font-size: 0.96rem;
     white-space: nowrap;
   }
 
   strong span {
-    color: #63758a;
+    color: palette.$text-muted;
     font-size: 0.75rem;
     font-weight: 500;
   }
@@ -253,7 +251,7 @@
 
   p {
     margin: 0;
-    color: #63758a;
+    color: palette.$text-muted;
     font-size: 0.84rem;
     line-height: 1.5;
   }
@@ -261,22 +259,18 @@
 
 .planner-link {
   flex: 0 0 auto;
-  border-color: #1d5eb5;
-  background: #1d5eb5;
+  border-color: palette.$brand;
+  background: palette.$brand;
 
   &:hover {
-    border-color: #194f97;
-    background: #194f97;
+    border-color: palette.$brand-hover;
+    background: palette.$brand-hover;
   }
 }
 
 @media (max-width: 640px) {
   .rates-header {
     padding: 10px 16px;
-  }
-
-  .brand-name {
-    font-size: 0.95rem;
   }
 
   .header-title {

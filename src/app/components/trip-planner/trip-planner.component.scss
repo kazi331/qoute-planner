@@ -1,14 +1,15 @@
-// Variables
-$primary: #173a5e;
-$primary-light: #1d5eb5;
-$accent: #087f5b;
-$danger: #b42332;
-$warning: #a15c07;
-$bg-light: #f5f7fb;
-$bg-white: #ffffff;
-$border: #e2e8f0;
-$text-dark: #1b2b40;
-$text-muted: #63758a;
+@use '../../../palette' as palette;
+
+$primary: palette.$ink;
+$primary-light: palette.$brand;
+$accent: palette.$success;
+$danger: palette.$danger;
+$warning: palette.$warning;
+$bg-light: palette.$page;
+$bg-white: palette.$surface;
+$border: palette.$border;
+$text-dark: palette.$text;
+$text-muted: palette.$text-muted;
 $radius: 8px;
 $radius-lg: 12px;
 $shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -42,7 +43,8 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .brand-icon {
-    font-size: 1.5rem;
+    width: 147px;
+    height: 36px;
   }
 
   .brand-name {
@@ -144,7 +146,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 9px 12px;
   border-left: 3px solid rgba($primary-light, 0.55);
   border-radius: 0 8px 8px 0;
-  background: #f7faff;
+  background: palette.$brand-wash;
 }
 
 .form-group {
@@ -200,19 +202,19 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   min-height: 42px;
   padding: 9px 12px 9px 36px;
-  border: 1px solid #d8e1ed;
+  border: 1px solid palette.$border-strong;
   border-radius: 9px;
   font-size: 0.88rem;
   line-height: 1.25;
   color: $text-dark;
   background: $bg-white;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 2px rgba(41, 35, 38, 0.04);
   transition: border-color 0.18s, box-shadow 0.18s, background-color 0.18s;
   appearance: none;
   outline: none;
 
   &:hover:not(:disabled) {
-    border-color: #b8c6d8;
+    border-color: palette.$border-strong;
   }
 
   &:focus {
@@ -221,7 +223,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:disabled {
-    background: #f1f5f9;
+    background: palette.$surface-muted;
     color: $text-muted;
     cursor: not-allowed;
   }
@@ -267,7 +269,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   align-items: center;
   gap: 8px;
   background: $bg-white;
-  border: 1px solid #e7edf5;
+  border: 1px solid palette.$border-soft;
   border-radius: 10px;
   padding: 4px 6px;
 
@@ -293,7 +295,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: background-color 0.18s, color 0.18s;
 
   &:hover {
-    background: #f1f5f9;
+    background: palette.$surface-muted;
     color: $primary;
   }
 
@@ -368,7 +370,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:hover {
-    color: darken($primary-light, 10%);
+    color: palette.$brand-hover;
     background: rgba($primary-light, 0.06);
   }
 
@@ -383,12 +385,12 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 0;
-  border: 1px solid #d8e1ed;
+  border: 1px solid palette.$border-strong;
   border-radius: 9px;
   overflow: hidden;
   width: fit-content;
   background: $bg-white;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 2px rgba(41, 35, 38, 0.04);
 }
 
 .form-select.ng-invalid.ng-touched,
@@ -413,7 +415,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: background-color 0.18s, color 0.18s;
 
   &:hover:not(:disabled) {
-    background: #f1f5f9;
+    background: palette.$surface-muted;
     color: $primary-light;
   }
 
@@ -425,7 +427,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:disabled {
-    color: #a0aec0;
+    color: palette.$text-disabled;
     cursor: not-allowed;
   }
 }
@@ -463,12 +465,12 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   color: $text-muted;
 
   &.error {
-    background: #fff4f4;
+    background: palette.$danger-soft;
     color: $danger;
   }
 
   &.success {
-    background: #edf8f3;
+    background: palette.$success-soft;
     color: $accent;
   }
 }
@@ -481,7 +483,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-height: 42px;
   padding: 9px 11px;
   margin-bottom: 8px;
-  border: 1px solid #e7edf5;
+  border: 1px solid palette.$border-soft;
   border-radius: 9px;
   background: $bg-white;
   cursor: pointer;
@@ -492,8 +494,8 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:hover {
-    border-color: #cbd8e8;
-    background: #fbfdff;
+    border-color: palette.$border-strong;
+    background: palette.$brand-wash;
   }
 
   &:focus-within {
@@ -507,7 +509,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
     flex: 0 0 auto;
     margin: 0;
     appearance: none;
-    border: 1.5px solid #b8c6d8;
+    border: 1.5px solid palette.$border-strong;
     border-radius: 5px;
     background: $bg-white;
     cursor: pointer;
@@ -597,7 +599,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 5px rgba($primary-light, 0.2);
 
   &:hover:not(:disabled) {
-    background: darken($primary-light, 7%);
+    background: palette.$brand-hover;
     box-shadow: 0 4px 10px rgba($primary-light, 0.22);
   }
 }
@@ -605,11 +607,11 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
 .btn-secondary {
   background: $bg-white;
   color: $text-dark;
-  border: 1px solid #d8e1ed;
+  border: 1px solid palette.$border-strong;
 
   &:hover:not(:disabled) {
-    background: #f8fafc;
-    border-color: #b8c6d8;
+    background: palette.$surface-muted;
+    border-color: palette.$border-strong;
   }
 }
 
@@ -619,7 +621,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1.5px solid rgba($danger, 0.3);
 
   &:hover {
-    background: #fff4f4;
+    background: palette.$danger-soft;
     border-color: $danger;
   }
 }
@@ -660,12 +662,12 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
 
 .quote-empty,
 .quote-loading {
-  background: linear-gradient(145deg, #ffffff, #f8fbff);
+  background: linear-gradient(145deg, palette.$surface, palette.$brand-wash);
   border-radius: 14px;
   padding: 40px 32px;
   text-align: center;
-  border: 1px solid #e5ebf4;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  border: 1px solid palette.$border-soft;
+  box-shadow: 0 8px 24px rgba(41, 35, 38, 0.05);
 }
 
 .quote-empty {
@@ -676,7 +678,7 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: 52px;
     margin: 0 auto 14px;
     border-radius: 15px;
-    background: #eff6ff;
+    background: palette.$brand-soft;
     color: $primary-light;
     font-size: 1.5rem;
     font-weight: 700;
@@ -731,8 +733,8 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   background: $bg-white;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid #e5ebf4;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  border: 1px solid palette.$border-soft;
+  box-shadow: 0 8px 24px rgba(41, 35, 38, 0.05);
 }
 
 .quote-header-badge {
@@ -741,21 +743,21 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-size: 0.95rem;
 
   &.success {
-    background: #edf8f3;
+    background: palette.$success-soft;
     color: $accent;
-    border-bottom: 1px solid #d5ebdf;
+    border-bottom: 1px solid palette.$success-border;
   }
 
   &.stale {
-    background: #fff9ec;
+    background: palette.$warning-soft;
     color: $warning;
-    border-bottom: 1px solid #f2dfb6;
+    border-bottom: 1px solid palette.$warning-border;
   }
 
   &.error {
-    background: #fff4f4;
+    background: palette.$danger-soft;
     color: $danger;
-    border-bottom: 1px solid #f2d8dc;
+    border-bottom: 1px solid palette.$danger-border;
   }
 }
 
@@ -773,12 +775,12 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   align-items: center;
   gap: 12px;
   padding: 11px 10px;
-  border-bottom: 1px solid #edf1f6;
+  border-bottom: 1px solid palette.$border-soft;
   border-radius: 7px;
   transition: background-color 0.18s;
 
   &:hover {
-    background: #f8fafc;
+    background: palette.$surface-muted;
   }
 
   &:last-child {
@@ -814,11 +816,11 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 14px 16px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(120deg, $primary, #244c78);
-  box-shadow: 0 4px 10px rgba($primary, 0.16);
+  background: linear-gradient(120deg, palette.$brand, palette.$brand-dark);
+  box-shadow: 0 4px 10px rgba(palette.$brand, 0.16);
 
   &:hover {
-    background: linear-gradient(120deg, $primary, #244c78);
+    background: linear-gradient(120deg, palette.$brand, palette.$brand-dark);
   }
 
   .quote-label {
@@ -837,17 +839,17 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .quote-error {
-  border-color: #eed0d4;
+  border-color: palette.$danger-border;
 }
 
 .quote-valid-badge {
   margin: 0 20px 20px;
   padding: 12px 14px;
-  border: 1px solid #c7f0dc;
+  border: 1px solid palette.$success-border;
   border-radius: 9px;
-  background: #f0fdf7;
+  background: palette.$success-soft;
   font-size: 0.82rem;
-  color: #047857;
+  color: palette.$success;
   font-weight: 500;
   line-height: 1.45;
 }
@@ -855,11 +857,11 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
 .stale-message {
   margin: 12px 18px 0;
   padding: 10px 12px;
-  border: 1px solid #fde68a;
+  border: 1px solid palette.$warning-border;
   border-radius: 8px;
-  background: #fffbeb;
+  background: palette.$warning-soft;
   font-size: 0.88rem;
-  color: #854d0e;
+  color: palette.$warning;
   line-height: 1.45;
 }
 
@@ -870,11 +872,11 @@ $shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 16px;
   margin: 0;
   list-style: none;
-  background: #fffafb;
+  background: palette.$brand-wash;
 
   li {
     padding: 9px 12px;
-    border-left: 3px solid #e5a1aa;
+    border-left: 3px solid palette.$brand-border;
     border-radius: 4px;
     background: white;
     font-size: 0.88rem;

@@ -33,6 +33,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private quoteRequest$ = new Subject<TripConfig>();
+  private cancelQuote$ = new Subject<void>();
   private destroy$ = new Subject<void>();
   private requestCounter = 0;
   private lastQuotedConfig: string | null = null;
@@ -55,9 +56,13 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     });
     this.loadDraft();
 
-    // Mark quote as stale when form values change after a successful quote
+    // Cancel pending quotes on edits and mark completed quotes stale.
     this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      if (this.quoteState.status === 'success') {
+      if (this.quoteState.status === 'pending') {
+        this.currentRequestId++;
+        this.cancelQuote$.next();
+        this.quoteState = { status: 'idle' };
+      } else if (this.quoteState.status === 'success') {
         const currentConfig = JSON.stringify(this.getConfigFromForm());
         if (currentConfig !== this.lastQuotedConfig) {
           this.quoteState = { status: 'stale', result: this.quoteState.result };
@@ -180,6 +185,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
       switchMap(config => {
         const reqId = this.currentRequestId;
         return this.quoteService.generateQuote(config).pipe(
+          takeUntil(this.cancelQuote$),
           tap(result => {
             if (reqId === this.currentRequestId) {
               this.lastQuotedConfig = JSON.stringify(config);

@@ -1,17 +1,19 @@
 # Multi-Stop Trip Quote Planner
 
-A self-contained Angular 18 application for configuring multi-stop truck trips, generating fare estimates, and saving drafts locally.
+A self-contained Angular 18 application for configuring multi-stop truck trips, generating fare estimates, and saving drafts locally. Trip and location data are fictional; no backend or external API is required.
 
-## Prerequisites
+## Environment
 
-- **Node.js** 18.19+ or 20+
-- **Bun** 1.0+ (package manager)
-- Angular CLI is included as a dev dependency
+- **Node.js:** 22.23.2
+- **Bun:** 1.4.2 (package manager and script runner)
+- **Angular:** 18 (Angular CLI is included as a development dependency)
+
+The versions above were used to build and test the application.
 
 ## Setup
 
 ```bash
-bun install
+bun i
 ```
 
 ## Development Server
@@ -32,45 +34,52 @@ Build artifacts are stored in `dist/`.
 
 ## Running Tests
 
+Run the test suite in watch mode:
+
 ```bash
 bun run test
 ```
 
-For a single headless run:
+Run the test in a headless browser:
 
 ```bash
-npx ng test --no-watch --browsers=ChromeHeadless
+bun run test --watch=false --browsers=ChromeHeadless
 ```
 
-## Features
-
-1. **Trip Configuration** — Select a pickup and 1–3 ordered drop-off locations with drag-and-drop reordering (Angular CDK). Select truck category, truck count (1–5), and cargo weight with inline capacity validation.
-
-2. **Route Distance** — Uses a symmetric distance matrix between five fictional Dhaka locations. Total distance is the sum of consecutive-pair distances in the user's selected order.
-
-3. **Pricing Engine** — Implements the specified fare formula: `farePerTruck = max(distance * rate, minimumFare)`. Adds optional loading/unloading service fees per truck.
-
-4. **Asynchronous Quotes** — `QuoteService.generateQuote()` returns an Observable with a random 300–1,200 ms simulated delay. The component uses `switchMap` to automatically cancel stale in-flight requests when the user triggers a new quote. The delay function is injectable for deterministic testing.
-
-5. **Draft Persistence** — `DraftService` saves/restores trip configuration to `localStorage`. Sanitizes restored data against unknown location IDs, duplicate locations, out-of-range values, and invalid JSON. A restored draft never carries over a previous quote.
-
-6. **Validation** — Pickup time is validated against the current clock when requesting a quote (not just on edit). Cargo weight is checked against total fleet capacity. Duplicate locations are rejected. Clear error messages are shown per the UI design.
 
 ## Technical Decisions
 
-- **Reactive Forms** — The entire trip form uses Angular Reactive Forms with `FormArray` for the variable-length drop-off list. This gives programmatic control over validation, dynamic additions/removals, and value tracking.
+- **Reactive Forms** — The trip form uses Angular Reactive Forms and a `FormArray` for the variable-length drop-off list, supporting dynamic stop management and validation.
 
-- **switchMap for race-condition safety** — When a user fires a new quote request while one is pending, `switchMap` unsubscribes from the old Observable. This guarantees the displayed result always matches the latest request, with no stale-data risk.
+- **Angular CDK Drag-and-Drop** — Used for stop reordering rather than a custom implementation.
 
-- **Testable delay injection** — `QuoteService.setDelayFn()` lets tests swap the random delay for `() => 0`, making async specs deterministic without real timeouts.
+- **Quote race safety** — `switchMap` unsubscribes from the previous request when a new quote starts. A pending quote is also cancelled when its input form changes, and a request ID guard prevents obsolete results from being applied.
 
-- **Draft sanitization** — `DraftService.loadDraft()` runs every restored field through type checks, range clamps, and set-based dedup. Invalid or unknown data gracefully degrades rather than crashing.
+- **Testable delay injection** — `QuoteService.setDelayFn()` lets tests replace the random delay with a deterministic duration.
 
-- **Angular CDK Drag-and-Drop** — Used for drop-off reordering instead of a custom implementation. Provides accessible keyboard support, smooth animations, and a consistent drag preview.
+- **Draft sanitization** — `DraftService.loadDraft()` validates and normalizes persisted values before using them, so malformed or outdated local data does not crash the form.
+
+- **Single pricing source** — The Rates page and quote calculation use the same truck and service pricing constants to avoid divergent displayed and calculated rates.
+
+## Issues Addressed
+
+- A quote could otherwise complete for inputs that had changed while it was pending. Form edits now cancel the in-flight request, and request IDs guard against obsolete results.
+- Persisted drafts can be malformed or out of date, so restored values are sanitized before they are applied to the form.
 
 ## Verification
 
-The verification example from the spec passes as an automated test:
+The automated tests cover pricing and route calculations, quote validation, draft sanitization, stop selection, and asynchronous quote state (including cancellation when inputs change). The application was verified with:
+
+```bash
+bun run build
+bun run test --watch=false --browsers=ChromeHeadless
+```
+
+The verification example from the specification is covered by an automated test:
 
 > Pickup A → Drop B → Drop C, 2 Medium trucks, 5 tonnes, loading assistance only:
 > distance 27 km, transport 4,590 BDT, services 1,200 BDT, total 5,790 BDT.
+
+## AI Assistance Disclosure
+
+GitHub Copilot in VS Code was used to assist with implementation and documentation. The implementation and README were reviewed against the assessment requirements, including pricing, validation, draft handling, and asynchronous quote state. The build and headless test suite above were run; the tests cover quote calculations, validation, draft handling, route selection, and asynchronous request state.

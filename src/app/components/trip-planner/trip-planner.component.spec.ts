@@ -1,8 +1,8 @@
+
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { TripPlannerComponent } from './trip-planner.component';
 import { QuoteService } from '../../services/quote.service';
-import { DraftService } from '../../services/draft.service';
+import { TripPlannerComponent } from './trip-planner.component';
 
 describe('TripPlannerComponent', () => {
   let component: TripPlannerComponent;
@@ -179,6 +179,31 @@ describe('TripPlannerComponent', () => {
       expect(component.quoteState.result.route).toEqual(['A', 'C']);
       expect(component.quoteState.result.distanceKm).toBe(18);
     }
+  }));
+
+  it('should cancel a pending quote when the trip inputs change', fakeAsync(() => {
+    quoteService.setDelayFn(() => 500);
+    component.form.patchValue({
+      pickup: 'A',
+      truckCategory: 'mini',
+      truckCount: 1,
+      cargoWeight: 1,
+      pickupDate: '2099-12-31',
+      pickupTime: '12:00',
+      loadingAssistance: false,
+      unloadingAssistance: false,
+    });
+    component.addDropoff();
+    component.dropoffs.at(0).setValue('B');
+
+    component.requestQuote();
+    expect(component.quoteState.status).toBe('pending');
+
+    component.form.patchValue({ truckCount: 2 });
+    expect(component.quoteState.status).toBe('idle');
+
+    tick(600);
+    expect(component.quoteState.status).toBe('idle');
   }));
 
   it('should increment and decrement truck count within bounds', () => {
