@@ -54,6 +54,13 @@ describe('TripPlannerComponent', () => {
   it('should show errors when requesting quote with invalid form', () => {
     component.requestQuote();
     expect(component.quoteState.status).toBe('error');
+    expect(component.pickup.touched).toBeTrue();
+    expect(component.dropoffs.at(0).touched).toBeTrue();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.form-select.ng-invalid.ng-touched')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.form-input.ng-invalid.ng-touched')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.quote-error')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.field-hint.error')).toBeNull();
     if (component.quoteState.status === 'error') {
       expect(component.quoteState.errors.length).toBeGreaterThan(0);
     }
@@ -78,10 +85,15 @@ describe('TripPlannerComponent', () => {
 
     component.requestQuote();
     tick(10);
+    fixture.detectChanges();
 
     expect(component.quoteState.status).toBe('success');
     if (component.quoteState.status === 'success') {
       expect(component.quoteState.result.totalQuote).toBe(5790);
+      const routeText = fixture.nativeElement.querySelector('.quote-success .route-value')?.textContent ?? '';
+      expect(routeText).toContain('Baily Road');
+      expect(routeText).toContain('Shahbagh');
+      expect(routeText).toContain('Bijoy Sarani');
     }
   }));
 

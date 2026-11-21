@@ -102,6 +102,17 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     return spec.capacityTonnes * this.truckCount;
   }
 
+  get cargoOverCapacity(): boolean {
+    const weight = this.form.get('cargoWeight')?.value;
+    return typeof weight === 'number' && weight > this.maxCapacity;
+  }
+
+  get pickupScheduleInvalid(): boolean {
+    const date = this.form.get('pickupDate')?.value;
+    const time = this.form.get('pickupTime')?.value;
+    return this.quoteState.status === 'error' && !!date && !!time && !this.isPickupInFuture();
+  }
+
   get availablePickupLocations(): Location[] {
     const usedDropoffs = new Set(this.dropoffs.controls.map(c => c.value));
     return LOCATIONS.filter(l => !usedDropoffs.has(l.id));
@@ -147,7 +158,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   getLocationLabel(id: LocationId | null): string {
     if (!id) return '';
     const loc = LOCATIONS.find(l => l.id === id);
-    return loc ? `${loc.id} — ${loc.name}` : '';
+    return loc?.name ?? '';
   }
 
   // Quote handling
@@ -177,6 +188,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     const config = this.getConfigFromForm();
     const errors = this.quoteService.validateForQuote(config);
     if (errors.length > 0) {
+      this.form.markAllAsTouched();
       this.quoteState = { status: 'error', errors };
       return;
     }
