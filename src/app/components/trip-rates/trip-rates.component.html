@@ -1,0 +1,78 @@
+<div class="rates-page">
+  <header class="rates-header">
+    <div class="header-brand">
+      <span class="brand-icon" aria-hidden="true">🚛</span>
+      <span class="brand-name">Truck Lagbe</span>
+      <span class="header-divider"></span>
+      <span class="header-title">Trip Rates</span>
+    </div>
+    <a class="back-link" routerLink="/">Back to trip planner</a>
+  </header>
+
+  <main class="rates-content">
+    <div class="page-intro">
+      <p class="eyebrow">PRICING GUIDE</p>
+      <h1>Trip rates</h1>
+      <p>Review truck rates and optional service fees before planning your trip.</p>
+    </div>
+
+    <section class="rates-card" aria-labelledby="truck-rates-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="truck-rates-title">Truck rates</h2>
+          <p>Transport pricing is calculated per truck.</p>
+        </div>
+        <span class="rate-unit">BDT</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="rates-table">
+          <thead>
+            <tr>
+              <th scope="col">Truck category</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Rate per km</th>
+              <th scope="col">Minimum fare</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (spec of truckCategories; track spec.category) {
+              <tr>
+                <th scope="row">{{ spec.label }}</th>
+                <td>{{ spec.capacityTonnes }} tonnes</td>
+                <td class="price-cell">৳{{ spec.ratePerKm }} <span>/ km</span></td>
+                <td class="price-cell">৳{{ spec.minimumFare | number }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="rate-note">The transport fare per truck is the greater of the distance-based rate or the minimum fare.</p>
+    </section>
+
+    <section class="service-section" aria-labelledby="service-rates-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="service-rates-title">Optional services</h2>
+          <p>Service fees are charged per truck.</p>
+        </div>
+      </div>
+
+      <div class="service-grid">
+        <article class="service-card">
+          <span class="service-name">Loading assistance</span>
+          <strong>৳{{ loadingFee }} <span>/ truck</span></strong>
+        </article>
+        <article class="service-card">
+          <span class="service-name">Unloading assistance</span>
+          <strong>৳{{ unloadingFee }} <span>/ truck</span></strong>
+        </article>
+      </div>
+    </section>
+
+    <div class="rates-footer">
+      <p>Final estimates depend on your selected route, truck count, and services.</p>
+      <a class="planner-link" routerLink="/">Plan a trip</a>
+    </div>
+  </main>
+</div>

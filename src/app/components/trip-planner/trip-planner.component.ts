@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap, takeUntil, tap } from 'rxjs';
 
 import { LOCATIONS, Location, LocationId } from '../../models/location.model';
@@ -13,7 +14,7 @@ import { DraftService } from '../../services/draft.service';
 @Component({
   selector: 'app-trip-planner',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DragDropModule],
+  imports: [CommonModule, ReactiveFormsModule, DragDropModule, RouterLink],
   templateUrl: './trip-planner.component.html',
   styleUrl: './trip-planner.component.scss',
 })

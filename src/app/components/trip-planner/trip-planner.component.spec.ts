@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { TripPlannerComponent } from './trip-planner.component';
 import { QuoteService } from '../../services/quote.service';
 import { DraftService } from '../../services/draft.service';
@@ -13,6 +14,7 @@ describe('TripPlannerComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TripPlannerComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TripPlannerComponent);
