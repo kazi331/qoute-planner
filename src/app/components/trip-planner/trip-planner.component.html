@@ -50,16 +50,16 @@
               @for (ctrl of dropoffs.controls; track ctrl; let i = $index) {
               <div class="dropoff-item" cdkDrag>
                 <div class="drag-handle" cdkDragHandle>⣿</div>
-                  <div class="dropoff-field">
-                    <div class="select-wrapper dropoff-select">
-                      <span class="input-icon">📍</span>
-                      <select [formControl]="$any(ctrl)" class="form-select">
-                        <option [ngValue]="null" disabled>Select drop-off</option>
-                        @for (loc of availableDropoffLocations(i); track loc.id) {
-                        <option [ngValue]="loc.id">{{ loc.id }} — {{ loc.name }}</option>
-                        }
-                      </select>
-                    </div>
+                <div class="dropoff-field">
+                  <div class="select-wrapper dropoff-select">
+                    <span class="input-icon">📍</span>
+                    <select [formControl]="$any(ctrl)" class="form-select">
+                      <option [ngValue]="null" disabled>Select drop-off</option>
+                      @for (loc of availableDropoffLocations(i); track loc.id) {
+                      <option [ngValue]="loc.id">{{ loc.id }} — {{ loc.name }}</option>
+                      }
+                    </select>
+                  </div>
                 </div>
                 <button type="button" class="btn-icon btn-remove" (click)="removeDropoff(i)" title="Remove drop-off">
                   ✕
@@ -117,8 +117,7 @@
             <div class="input-wrapper">
               <span class="input-icon">📦</span>
               <input type="number" formControlName="cargoWeight" class="form-input" placeholder="Enter cargo weight"
-                [class.input-invalid]="quoteState.status === 'error' && cargoOverCapacity"
-                [min]="0.01" step="0.1">
+                [class.input-invalid]="quoteState.status === 'error' && cargoOverCapacity" [min]="1" step="0.5">
             </div>
             <span class="field-hint">
               Max capacity: {{ maxCapacity }} tonnes
