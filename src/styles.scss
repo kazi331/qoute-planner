@@ -17,6 +17,15 @@ input, select, button, textarea {
   font-family: inherit;
 }
 
+.planner-container .app-header .brand-icon {
+  width: 147px;
+  height: 36px;
+}
+
+.planner-container .app-header .mobile-header-title {
+  display: none;
+}
+
 .planner-body > .quote-drawer-backdrop,
 .planner-body .quote-drawer-heading {
   display: none;
@@ -116,5 +125,38 @@ input, select, button, textarea {
 @media (prefers-reduced-motion: reduce) {
   .planner-body > .quote-panel.mobile-drawer-open {
     animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .planner-container .app-header .brand-icon {
+    width: 116px;
+    height: auto;
+  }
+
+  .planner-container .app-header .header-divider,
+  .planner-container .app-header .desktop-header-title {
+    display: none;
+  }
+
+  .planner-container .app-header .mobile-header-title {
+    display: inline;
+  }
+
+  .planner-container .app-header .header-title {
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .planner-container .app-header .btn-save-draft-header {
+    min-height: 36px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .planner-container .app-header .header-title {
+    display: none;
   }
 }

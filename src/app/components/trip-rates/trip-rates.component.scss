@@ -59,6 +59,10 @@
   transition: background-color 0.18s, border-color 0.18s;
 }
 
+.mobile-link-label {
+  display: none;
+}
+
 .back-link:hover {
   border-color: rgba(255, 255, 255, 0.48);
   background: rgba(255, 255, 255, 0.12);
@@ -270,11 +274,39 @@
 
 @media (max-width: 640px) {
   .rates-header {
+    gap: 12px;
     padding: 10px 16px;
+  }
+
+  .header-brand {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 116px;
+    height: auto;
+  }
+
+  .header-divider,
+  .desktop-link-label {
+    display: none;
   }
 
   .header-title {
     font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .back-link {
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .mobile-link-label {
+    display: inline;
   }
 
   .rates-content {
@@ -296,14 +328,18 @@
   }
 }
 
-@media (max-width: 420px) {
-  .header-divider,
-  .header-title {
-    display: none;
+@media (max-width: 360px) {
+  .rates-header {
+    gap: 8px;
+    padding: 8px 12px;
   }
 
   .back-link {
-    padding: 8px 10px;
-    font-size: 0.8rem;
+    padding: 8px 9px;
+    font-size: 0.78rem;
+  }
+
+  .header-title {
+    display: none;
   }
 }
