@@ -26,6 +26,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   readonly unloadingFee = UNLOADING_FEE_PER_TRUCK;
 
   form!: FormGroup;
+  readonly initialDropoffControl = new FormControl<LocationId | null>(null, Validators.required);
   quoteState: QuoteState = { status: 'idle' };
 
   draftSaved = false;
@@ -46,6 +47,12 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForm();
     this.setupQuoteSubscription();
+    this.initialDropoffControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(locationId => {
+      if (locationId) {
+        this.addDropoff(locationId);
+        this.initialDropoffControl.reset(null, { emitEvent: false });
+      }
+    });
     this.loadDraft();
 
     // Mark quote as stale when form values change after a successful quote
@@ -69,7 +76,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       pickup: [null as LocationId | null, Validators.required],
       dropoffs: this.fb.array(
-        [new FormControl(null as LocationId | null, Validators.required)],
+        [],
         [Validators.required, Validators.minLength(1), Validators.maxLength(3)]
       ),
       truckCategory: ['medium' as TruckCategory, Validators.required],
@@ -128,9 +135,9 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     return LOCATIONS.filter(l => !used.has(l.id));
   }
 
-  addDropoff(): void {
+  addDropoff(locationId: LocationId | null = null): void {
     if (this.dropoffs.length >= 3) return;
-    this.dropoffs.push(new FormControl(null as LocationId | null, Validators.required));
+    this.dropoffs.push(new FormControl(locationId, Validators.required));
   }
 
   removeDropoff(index: number): void {
@@ -190,6 +197,9 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
     const errors = this.quoteService.validateForQuote(config);
     if (errors.length > 0) {
       this.form.markAllAsTouched();
+      if (this.dropoffs.length === 0) {
+        this.initialDropoffControl.markAsTouched();
+      }
       this.quoteState = { status: 'error', errors };
       return;
     }
@@ -239,12 +249,8 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
 
     // Restore dropoffs (ensure at least 1)
     this.dropoffs.clear();
-    if (draft.dropoffs.length === 0) {
-      this.dropoffs.push(new FormControl(null as LocationId | null, Validators.required));
-    } else {
-      for (const d of draft.dropoffs) {
-        this.dropoffs.push(new FormControl(d, Validators.required));
-      }
+    for (const d of draft.dropoffs) {
+      this.dropoffs.push(new FormControl(d, Validators.required));
     }
   }
 
@@ -261,7 +267,7 @@ export class TripPlannerComponent implements OnInit, OnDestroy {
       unloadingAssistance: false,
     });
     this.dropoffs.clear();
-    this.dropoffs.push(new FormControl(null as LocationId | null, Validators.required));
+    this.initialDropoffControl.reset(null, { emitEvent: false });
     this.quoteState = { status: 'idle' };
     this.lastQuotedConfig = null;
   }

@@ -38,6 +38,17 @@ describe('TripPlannerComponent', () => {
     expect(component.form.get('pickup')?.value).toBeNull();
   });
 
+  it('should show a placeholder drop-off selector and create a stop when selected', () => {
+    expect(fixture.nativeElement.querySelector('.dropoff-placeholder select')).toBeTruthy();
+
+    component.initialDropoffControl.setValue('B');
+    fixture.detectChanges();
+
+    expect(component.dropoffs.length).toBe(1);
+    expect(component.dropoffs.at(0).value).toBe('B');
+    expect(fixture.nativeElement.querySelector('.dropoff-placeholder')).toBeNull();
+  });
+
   it('should add and remove dropoff locations', () => {
     component.addDropoff();
     expect(component.dropoffs.length).toBe(1);
@@ -57,7 +68,7 @@ describe('TripPlannerComponent', () => {
     component.requestQuote();
     expect(component.quoteState.status).toBe('error');
     expect(component.pickup.touched).toBeTrue();
-    expect(component.dropoffs.at(0).touched).toBeTrue();
+    expect(component.initialDropoffControl.touched).toBeTrue();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.form-select.ng-invalid.ng-touched')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.form-input.ng-invalid.ng-touched')).toBeTruthy();
@@ -65,7 +76,16 @@ describe('TripPlannerComponent', () => {
     expect(fixture.nativeElement.querySelector('.field-hint.error')).toBeNull();
     if (component.quoteState.status === 'error') {
       expect(component.quoteState.errors.length).toBeGreaterThan(0);
+      expect(component.quoteState.errors).toContain('At least one drop-off location is required.');
     }
+  });
+
+  it('should clear to an empty trip configuration', () => {
+    component.addDropoff();
+    component.clearDraft();
+
+    expect(component.dropoffs.length).toBe(0);
+    expect(component.quoteState.status).toBe('idle');
   });
 
   it('should generate a successful quote', fakeAsync(() => {

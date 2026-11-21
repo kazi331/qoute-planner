@@ -65,6 +65,24 @@
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
               }
+              @if (dropoffs.length === 0) {
+              <div class="dropoff-item dropoff-placeholder">
+                <div class="drag-handle" aria-hidden="true">⣿</div>
+                <div class="dropoff-field">
+                  <div class="select-wrapper dropoff-select">
+                    <span class="input-icon">📍</span>
+                    <select [formControl]="initialDropoffControl" class="form-select">
+                      <option [ngValue]="null" disabled>Select drop-off</option>
+                      @for (loc of availableDropoffLocations(0); track loc.id) {
+                      <option [ngValue]="loc.id">{{ loc.id }} — {{ loc.name }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+                <button type="button" class="btn-icon btn-remove" disabled
+                  aria-label="Remove drop-off" title="No drop-off to remove">✕</button>
+              </div>
+              }
             </div>
 
             @if (dropoffs.length < 3) { <button type="button" class="btn-add-dropoff" (click)="addDropoff()">
